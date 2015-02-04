@@ -1,101 +1,77 @@
 ;
 (function() {
 
-        function EtsyUser(key) { //beginning of constructor
-                this.key = key;
-                this.listings = [];
-                var self = this;
-                
-                var EtsyRouter = Backbone.Router.extend({
-                    routes: {
-                        ":listing_id": "drawListingInfo"
-                    },
-                    
-                    drawListingInfo: function(listing_id) 
-                    { self.drawlistings(listing_id);
-                    },//a value assigned to var GithubRouter; what info does this give me?
-                        
-                    initialize: function() { Backbone.history.start();}
-                })
-                var router = new EtsyRouter();
-                this.draw();    // -->this doesn't exist yet; I need to create my own
-           
-            };//end of constructor
+    function EtsyUser(key) { //beginning of constructor
+        this.key = key;
+        this.listings = [];
+        var self = this;
 
-        //** get listings info [create "drawlistings"]
-        //** create a draw function
-        //** create a "loadTemplate"
-        EtsyUser.prototype = {
-            URLs: { Etsy_url: function() {
-                    return $.getJSON("https://openapi.etsy.com/v2/listings/active.js?api_key=p5b2j8ib5bv8kej7r78oylwb&callback=?"
-                        ).then(function(data) {return data });
-                    // listings: "https://openapi.etsy.com/v2/listings/:listing_id.js"
-                }
+        var EtsyRouter = Backbone.Router.extend({
+            routes: {
+                "listing/:id": "detail",
+                "": "home"
             },
-        
-                
-               listingstoken : function() {
-                    return "api_key=" + this.key;
-                },
 
-                getData: function(listing_id) {
-                    var x = $.Deferred();
-                    self = this;
+            home: function() {
+                self.draw();
+            },
 
-                    if (this.listings.length > 0) {
-                        x.resolve(this.listings);
-                    } else {
-                        var p = $.get(this.URLs.Etsy_url + this.listingstoken()); //-->undefined, why?
-                        p.then(function(data) {
-                            x.resolve(data);
-                            self.listings = data;
-                })
+            detail: function(id){
+                alert(id)
+                // self.detail(id)
+            },
+
+            initialize: function() {
+                Backbone.history.start();
             }
+        })
+        var router = new EtsyRouter();
 
-            return x;
-        },
-                
-                drawListings: function(listing_id) { 
-                    return $.getJSON(this.URLs.Etsy_url + ".js" + "includes=images(url_570xN)&" + this.listingstoken() + "&callback=?"
-                        )
-                .then(function(data){ return data;
-                })
+    }; //end of constructor
+
+    //** get listings info [create "drawlistings"]
+    //** create a draw function
+    //** create a "loadTemplate"
+    EtsyUser.prototype = {
+        URLs: {
+            //         return $.getJSON("https://openapi.etsy.com/v2/listings/active.js?api_key=p5b2j8ib5bv8kej7r78oylwb&callback=?"
+            //             ).then(function(data) {return data });}
+            listings: function(key){
+                return "https://openapi.etsy.com/v2/listings/active.js?includes=Images&api_key="+key+"&callback=?"
             },
+            detail: function(key, id){
+                return "https://openapi.etsy.com/v2/listings/"+id+".js?includes=Images&api_key="+key+"&callback=?"
+            }
+        },
 
-                loadTemplate: function(name) {
-                    return $.get("./tempates/" + name + ".html").then(function(data) {
-                        return data;})
-                },
+        getData: function() {
+            var drawdata_url = this.URLs.listings(this.key);
 
-                draw: function() {
-                    $.when(this.getData(), 
-                        this.loadTemplate("Listings")
-                        ).then(function(listings, html) {
-                        var homepage = document.querySelector(".grid");
-                        homepage.innerHTML += _.template(html, {listings: listings});
-                    })
-                
-                },
-            
-        } 
-    
-            window.EtsyUser = EtsyUser;
+            return $.getJSON(drawdata_url)
+                .then(function(data) {
+                    return data;
+                })
+        },
 
-        })();
+        loadTemplate: function(name) {
+            return $.get("./templates/" + name + ".html").then(function(data) {
+                return data;
+            })
+        },
 
+        draw: function() {
+            $.when(
+                this.getData(),
+                this.loadTemplate("Listings")
+            ).then(function(data, html) {
+                debugger;
+                var templatingFn = _.template(html);
+                document.querySelector(".container").innerHTML = templatingFn(data);
+            })
+        }
 
-      // console.log(drawlistings)
-                    // var drawdata_url = this.URLs.Etsy_url + ".js?" + "includes=Images(url_570xN)&" + this.listings_token() + "&callback=?"
+    }
 
-                    // return $.getJSON(drawdata_url)
-                    // .then(function(data){
-                    //     // console.log(drawdata_url)
-                    //     // console.log(data.results);
-                        // return data.results;})
-   
+    window.EtsyUser = EtsyUser;
 
-   
-
-                    //     })
-
-                    // }
+})();

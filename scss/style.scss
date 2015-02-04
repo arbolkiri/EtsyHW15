@@ -16,10 +16,12 @@
 
 .grid {
     width: 100%;
-    display: block;
+   
+    display: inline-block;
     font-size: 0;
     text-align: justify;
     position: relative;
+   
 
     & > * {
         font-size: medium;
@@ -27,6 +29,7 @@
         display: inline-block;
         width: 100%;
         vertical-align: top;
+
     }
 
     &:after {
@@ -34,6 +37,7 @@
         width: 100%;
         content: "";
         font-size: medium;
+
     }
 }
 
@@ -48,6 +52,7 @@ img {max-width:100%;}
 
 body {
     transition: opacity .25s ease;
+
 }
 
 .header{
@@ -76,6 +81,7 @@ display:inline-block;
     height: 32px;
     font-family: sans-serif;
 }
+
 
 
 

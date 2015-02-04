@@ -1,8 +1,13 @@
+<div class="grid grid-2-400 grid-4-600">
+    <% _.forEach(results, function(l) { %>
+        <a href="#listing/<%= l.listing_id %>">
+        	<h6><%= l.title %></h6>
+            <!-- <%= l.description %> -->
+            <hr>
 
-    <% _.forEach(listings, function(l) { %>
-       
-            <a href="#<%= l.listing_id %>">
-                <%= l.listing_id %>
-            </a>
-        
+            <img src="<%= l.Images[0].url_570xN %>">
+
+            <p>$<%= l.price %></p>
+        </a>
     <% }); %>
+</div>
