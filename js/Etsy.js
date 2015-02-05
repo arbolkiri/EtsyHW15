@@ -64,12 +64,33 @@
                 this.getData(),
                 this.loadTemplate("Listings")
             ).then(function(data, html) {
-                debugger;
+
                 var templatingFn = _.template(html);
                 document.querySelector(".container").innerHTML = templatingFn(data);
             })
-        }
+        },
 
+        getDetails:function() {
+            var drawdetails_url = this.URLs.detail(this.key);
+debugger;
+            return $.getJSON(drawdetails_url)
+            .then(function(data){
+                return data;
+
+            })
+        },
+
+
+          draw: function() {
+            $.when(
+                this.getDetails(),
+                this.loadTemplate("Details")
+            ).then(function(data, html) {
+
+                var templatingFn = _.template(html);
+                document.querySelector(".container").innerHTML = templatingFn(data);
+            })
+        },
     }
 
     window.EtsyUser = EtsyUser;
